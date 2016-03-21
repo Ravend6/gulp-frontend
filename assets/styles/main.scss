@@ -1,0 +1,9 @@
+@import 'var.scss';
+
+body {
+  background: $lol;
+  background-image: url("../images/bg/bg.jpg");
+  h1 {
+    color: purple;
+  }
+}
