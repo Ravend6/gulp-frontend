@@ -13,6 +13,7 @@ import precss from 'precss';
 import cssnano from 'cssnano';
 import imagemin from 'gulp-imagemin';
 import plumber from 'gulp-plumber';
+import grename from 'gulp-rename';
 
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -31,10 +32,10 @@ gulp.task('build-js', wrapPipe(function(success, error) {
     .transform('babelify')
     .bundle()
     .on('error', error)
-    .pipe(source('bundle.js'))
+    .pipe(source('bundle.min.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(gif(NODE_ENV != 'development', uglify()))
+    .pipe(uglify())
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(`${DIST_DIR}/js`));
 }));
@@ -45,7 +46,7 @@ gulp.task('build-css', wrapPipe(function(success, error) {
     .pipe(postcss([precss, autoprefixer, cssnano]))
     .on('error', error)
     .pipe(sourcemaps.write())
-    .pipe(extreplace('.css'))
+    .pipe(grename('bundle.min.css'))
     .pipe(gulp.dest(`${DIST_DIR}/css`));
 }));
 
@@ -68,10 +69,10 @@ gulp.task('default', ['watch', 'build-js', 'build-css', 'build-img']);
 
 function wrapPipe(taskFn) {
   return function (done) {
-    var onSuccess = function() {
+    var onSuccess = function () {
       done();
     };
-    var onError = function(err) {
+    var onError = function (err) {
       done(err);
     }
     var outStream = taskFn(onSuccess, onError);
