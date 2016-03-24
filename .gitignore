@@ -49,6 +49,7 @@ crashlytics-build.properties
 ### Yeoman template
 node_modules/
 bower_components/
+dist/bower
 *.log
 
 # tsd packages

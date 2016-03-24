@@ -1,0 +1,23 @@
+{
+  "name": "frontend-gulp-start",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Ravend"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/Ravend6/gulp-frontend",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "dist/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.2",
+    "bootstrap": "^3.3.6"
+  }
+}

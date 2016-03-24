@@ -1,16 +1,6 @@
-import Post from './models/Post';
-// let Post = {
-//   findAll() {
-//     return new Promise((resolve, reject) => {
-//       resolve('ok posts');
-//     });
-//   }
-// }
+import App from './app';
 
-let ui = {
-  renderPosts(posts) {
-    console.log(posts);
-  }
-}
 
-Post.findAll().then(ui.renderPosts);
+
+new App().render();
+console.log($('.app'));

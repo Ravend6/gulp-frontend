@@ -12,6 +12,7 @@ import extreplace from 'gulp-ext-replace';
 import precss from 'precss';
 import cssnano from 'cssnano';
 import imagemin from 'gulp-imagemin';
+import plumber from 'gulp-plumber';
 
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -22,30 +23,31 @@ const DIST_DIR = './dist';
 const ASSETS_DIR = './assets';
 
 
-gulp.task('build-js', () => {
+gulp.task('build-js', wrapPipe(function(success, error) {
   return browserify({
       entries: `${SRC_DIR}/main.js`,
       debug: true
     })
-    .transform("babelify")
+    .transform('babelify')
     .bundle()
+    .on('error', error)
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(gif(NODE_ENV != 'development', uglify()))
-    .on('error', gutil.log)
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(`${DIST_DIR}/js`));
-});
+}));
 
-gulp.task('build-css', function () {
+gulp.task('build-css', wrapPipe(function(success, error) {
   return gulp.src(`${ASSETS_DIR}/styles/main.scss`)
     .pipe(sourcemaps.init())
     .pipe(postcss([precss, autoprefixer, cssnano]))
+    .on('error', error)
     .pipe(sourcemaps.write())
     .pipe(extreplace('.css'))
     .pipe(gulp.dest(`${DIST_DIR}/css`));
-});
+}));
 
 gulp.task('build-img', function () {
   return gulp.src(`${ASSETS_DIR}/images/**/*`)
@@ -63,3 +65,18 @@ gulp.task('watch', () => {
 
 gulp.task('default', ['watch', 'build-js', 'build-css', 'build-img']);
 
+
+function wrapPipe(taskFn) {
+  return function (done) {
+    var onSuccess = function() {
+      done();
+    };
+    var onError = function(err) {
+      done(err);
+    }
+    var outStream = taskFn(onSuccess, onError);
+    if (outStream && typeof outStream.on === 'function') {
+      outStream.on('end', onSuccess);
+    }
+  }
+}
